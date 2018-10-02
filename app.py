@@ -28,8 +28,8 @@ sbs = ServiceBusService(service_namespace,
                         shared_access_key_name=settings.SHARED_ACCESS_KEY_NAME,
                         shared_access_key_value=settings.SHARED_ACCESS_KEY)
 
-obachan_full = "https://rawgit.com/Wild-Family/line-bot/master/resource/obachan_full.jpg"
-obachan_thumb = "https://rawgit.com/Wild-Family/line-bot/master/resource/obachan_thumb.jpg"
+obachan_full = "https://rawgit.com/Wild-Family/new-obachan-bot/master/resource/obachan_full.jpg"
+obachan_thumb = "https://rawgit.com/Wild-Family/new-obachan-bot/master/resource/obachan_thumb.jpg"
 
 @app.route("/callback", methods=['POST'])
 def callback():
