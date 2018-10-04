@@ -1,10 +1,15 @@
 import os
 import json
+import io
 
 from azure.servicebus import ServiceBusService
 from azure.servicebus import Message
+from azure.storage.blob import BlockBlobService, PublicAccess, ContentSettings
 
 from flask import Flask, request, abort, jsonify
+from werkzeug.utils import secure_filename
+from PIL import Image
+
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -28,8 +33,16 @@ sbs = ServiceBusService(service_namespace,
                         shared_access_key_name=settings.SHARED_ACCESS_KEY_NAME,
                         shared_access_key_value=settings.SHARED_ACCESS_KEY)
 
+block_blob_service = BlockBlobService(
+                        account_name=settings.BLOB_ACCOUNT_NAME,
+                        account_key=settings.BLOB_ACCOUNT_KEY)
+container_pic = "pic"
+container_thumb = "thumb"
+
 obachan_full = "https://rawgit.com/Wild-Family/new-obachan-bot/master/resource/obachan_full.jpg"
 obachan_thumb = "https://rawgit.com/Wild-Family/new-obachan-bot/master/resource/obachan_thumb.jpg"
+pic_url = "https://obachanbot.blob.core.windows.net/pic/"
+thumb_url = "https://obachanbot.blob.core.windows.net/thumb/"
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -77,6 +90,47 @@ def start(user_id):
     print(profile.display_name)
 
     return jsonify(display_name=profile.display_name)
+
+@app.route("/user/<user_id>/post", methods=["GET", "POST"])
+def post_pic(user_id):
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'pic' not in request.files:
+            print('No file part')
+            return 'No file part'
+        file = request.files['pic']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            print('No selected file')
+            return 'No selected file'
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            image = file.read()
+            settings = ContentSettings(content_type="images")
+            # create original pic blob and store it on azure storage
+            block_blob_service.create_blob_from_bytes(container_pic, filename,  image, content_settings=settings)
+            # create thumb
+            pillow_obj = Image.open(io.BytesIO(image))
+            pillow_obj.thumbnail((240, 240))
+            thumb = io.BytesIO()
+            pillow_obj.save(thumb, format="JPEG")
+            # crate thumb blob and store it on azure storage
+            block_blob_service.create_blob_from_bytes(container_thumb, filename, thumb.getvalue(), content_settings=settings)
+            
+            line_bot_api.push_message(user_id, ImageSendMessage(original_content_url=pic_url + filename, preview_image_url=thumb_url + filename))
+
+            return jsonify(message="success!")
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=pic>
+      <input type=submit value=Upload>
+    </form>
+    '''
+
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=8000)

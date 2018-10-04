@@ -22,3 +22,13 @@ if SHARED_ACCESS_KEY_NAME is None:
 if SHARED_ACCESS_KEY is None:
     print('Specify SHARED_ACCESS_KEY as environment variable.')
     os.sys.exit(1)
+
+BLOB_ACCOUNT_NAME = os.getenv('BLOB_ACCOUNT_NAME', None)
+BLOB_ACCOUNT_KEY = os.getenv('BLOB_ACCOUNT_KEY', None)
+
+if BLOB_ACCOUNT_NAME is None:
+    print('Specify BLOB_ACCOUNT_NAME as environment variable.')
+    os.sys.exit(1)
+if BLOB_ACCOUNT_KEY is None:
+    print('Specify BLOB_ACCOUNT_KEY as environment variable.')
+    os.sys.exit(1)
