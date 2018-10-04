@@ -4,7 +4,7 @@ import json
 from azure.servicebus import ServiceBusService
 from azure.servicebus import Message
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -60,8 +60,7 @@ def handle_message(event):
         )
         sbs.create_queue('test')
         msg_dict = {
-            'user_id': event.source.user_id,
-            'pic_type': event.message.text
+            'user_id': event.source.user_id
         }
         msg_json = json.dumps(msg_dict, indent=4)
         msg = Message(msg_json)
@@ -71,6 +70,13 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text=event.message.text))
 
+@app.route("/user/<user_id>/start")
+def start(user_id):
+    profile = line_bot_api.get_profile(user_id)
+    line_bot_api.push_message(user_id, TextSendMessage(text=profile.display_name + "、今から撮るで！"))
+    print(profile.display_name)
+
+    return jsonify(display_name=profile.display_name)
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=8000)
