@@ -104,7 +104,7 @@ def post_pic(user_id):
         if file.filename == '':
             print('No selected file')
             return 'No selected file'
-        if file and allowed_file(file.filename):
+        if file:
             filename = secure_filename(file.filename)
             image = file.read()
             settings = ContentSettings(content_type="images")
@@ -119,6 +119,8 @@ def post_pic(user_id):
             block_blob_service.create_blob_from_bytes(container_thumb, filename, thumb.getvalue(), content_settings=settings)
             
             line_bot_api.push_message(user_id, ImageSendMessage(original_content_url=pic_url + filename, preview_image_url=thumb_url + filename))
+
+            line_bot_api.push_message(user_id, TextSendMessage(text="楽しんでや～！"))
 
             return jsonify(message="success!")
     return '''
