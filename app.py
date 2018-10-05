@@ -14,7 +14,8 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 from linebot.exceptions import (
-    InvalidSignatureError
+    InvalidSignatureError,
+    LineBotApiError
 )
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
@@ -87,8 +88,9 @@ def handle_message(event):
 
 @app.route("/user/<user_id>/start")
 def start(user_id):
-    profile = line_bot_api.get_profile(user_id)
-    if profile.display_name is None:
+    try:
+        profile = line_bot_api.get_profile(user_id)
+    except LineBotApiError:
         response = jsonify(user_id=user_id, message="user not found!")
         return response, 400
 
