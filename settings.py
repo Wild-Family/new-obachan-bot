@@ -3,6 +3,8 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+ENV = os.getenv('ENV', "development")
+
 CHANNEL_SECRET = os.getenv('CHANNEL_SECRET', None)
 CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN', None)
 
