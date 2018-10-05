@@ -126,7 +126,7 @@ def post_pic(user_id):
         if file:
             filename = secure_filename(file.filename)
             image = file.read()
-            settings = ContentSettings(content_type="images/jpeg")
+            settings = ContentSettings(content_type="image/jpeg")
             # create original pic blob and store it on azure storage
             block_blob_service.create_blob_from_bytes(container_pic, filename,  image, content_settings=settings)
             # create thumb
