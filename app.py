@@ -25,7 +25,10 @@ import settings
 app = Flask(__name__)
 
 host = os.getenv('HOST', 'http://localhost:8080')
+# development
 line_bot_api = LineBotApi(settings.CHANNEL_ACCESS_TOKEN, host)
+# production
+# line_bot_api = LineBotApi(settings.CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(settings.CHANNEL_SECRET)
 
 service_namespace = 'linebot-test'
