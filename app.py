@@ -137,7 +137,7 @@ def post_pic(user_id):
             # crate thumb blob and store it on azure storage
             block_blob_service.create_blob_from_bytes(container_thumb, filename, thumb.getvalue(), content_settings=settings)
             
-            line_bot_api.push_message(user_id, ImageSendMessage(original_content_url="https://ichef.bbci.co.uk/news/660/cpsprodpb/125C0/production/_101200257_putinreuters.jpg", preview_image_url=thumb_url + filename))
+            line_bot_api.push_message(user_id, ImageSendMessage(original_content_url=pic_url + filename, preview_image_url=thumb_url + filename))
 
             line_bot_api.push_message(user_id, TextSendMessage(text="楽しんでや～！"))
 
