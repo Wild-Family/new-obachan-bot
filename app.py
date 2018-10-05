@@ -89,7 +89,18 @@ def start(user_id):
     line_bot_api.push_message(user_id, TextSendMessage(text=profile.display_name + "、今から撮るで！"))
     print(profile.display_name)
 
-    return jsonify(display_name=profile.display_name)
+    return jsonify(user_id=user_id, display_name=profile.display_name, message="success!")
+
+@app.route("/user/<user_id>/status")
+def push_status(user_id):
+    dialogue = request.args.get("dialogue")
+    if dialogue is None:
+        response = jsonify(user_id=user_id, dialogue=None, message="dialogue parameter is missing!")
+        return response, 400
+
+    line_bot_api.push_message(user_id, TextSendMessage(text=dialogue))
+
+    return jsonify(user_id=user_id, dialogue=dialogue, message="success!")
 
 @app.route("/user/<user_id>/post", methods=["GET", "POST"])
 def post_pic(user_id):
@@ -122,7 +133,7 @@ def post_pic(user_id):
 
             line_bot_api.push_message(user_id, TextSendMessage(text="楽しんでや～！"))
 
-            return jsonify(message="success!")
+            return jsonify(user_id=user_id, message="success!")
     return '''
     <!doctype html>
     <title>Upload new File</title>
