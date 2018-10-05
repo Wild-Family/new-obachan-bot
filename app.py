@@ -86,6 +86,10 @@ def handle_message(event):
 @app.route("/user/<user_id>/start")
 def start(user_id):
     profile = line_bot_api.get_profile(user_id)
+    if profile.display_name is None:
+        response = jsonify(user_id=user_id, message="user not found!")
+        return response, 400
+
     line_bot_api.push_message(user_id, TextSendMessage(text=profile.display_name + "、今から撮るで！"))
     print(profile.display_name)
 
@@ -108,7 +112,9 @@ def post_pic(user_id):
         # check if the post request has the file part
         if 'pic' not in request.files:
             print('No file part')
-            return 'No file part'
+            response = jsonify(user_id=user_id, message="pic parameter is missing!")
+            return response, 400
+
         file = request.files['pic']
         # if user does not select file, browser also
         # submit an empty part without filename
