@@ -14,7 +14,8 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 from linebot.exceptions import (
-    InvalidSignatureError
+    InvalidSignatureError,
+    LineBotApiError
 )
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
@@ -25,7 +26,10 @@ import settings
 app = Flask(__name__)
 
 host = os.getenv('HOST', 'http://localhost:8080')
-line_bot_api = LineBotApi(settings.CHANNEL_ACCESS_TOKEN, host)
+if os.getenv('ENV') == "develpment":
+    line_bot_api = LineBotApi(settings.CHANNEL_ACCESS_TOKEN, host)
+elif os.getenv('ENV') == "production":
+    line_bot_api = LineBotApi(settings.CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(settings.CHANNEL_SECRET)
 
 service_namespace = 'linebot-test'
@@ -61,7 +65,6 @@ def callback():
 
     return 'OK'
 
-
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     if event.message.text in ['とって', '撮って', '取って', 'take a picture plz']:
@@ -85,7 +88,12 @@ def handle_message(event):
 
 @app.route("/user/<user_id>/start")
 def start(user_id):
-    profile = line_bot_api.get_profile(user_id)
+    try:
+        profile = line_bot_api.get_profile(user_id)
+    except LineBotApiError:
+        response = jsonify(user_id=user_id, message="user not found!")
+        return response, 400
+
     line_bot_api.push_message(user_id, TextSendMessage(text=profile.display_name + "、今から撮るで！"))
     print(profile.display_name)
 
@@ -108,7 +116,9 @@ def post_pic(user_id):
         # check if the post request has the file part
         if 'pic' not in request.files:
             print('No file part')
-            return 'No file part'
+            response = jsonify(user_id=user_id, message="pic parameter is missing!")
+            return response, 400
+
         file = request.files['pic']
         # if user does not select file, browser also
         # submit an empty part without filename
@@ -118,7 +128,7 @@ def post_pic(user_id):
         if file:
             filename = secure_filename(file.filename)
             image = file.read()
-            settings = ContentSettings(content_type="images")
+            settings = ContentSettings(content_type="image/jpeg")
             # create original pic blob and store it on azure storage
             block_blob_service.create_blob_from_bytes(container_pic, filename,  image, content_settings=settings)
             # create thumb
@@ -146,4 +156,4 @@ def post_pic(user_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    app.run(debug=True, host='0.0.0.0', port=os.getenv('PORT', 8000))
