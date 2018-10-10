@@ -43,8 +43,8 @@ block_blob_service = BlockBlobService(
 container_pic = "pic"
 container_thumb = "thumb"
 
-obachan_full = "https://rawgit.com/Wild-Family/new-obachan-bot/master/resource/obachan_full.jpg"
-obachan_thumb = "https://rawgit.com/Wild-Family/new-obachan-bot/master/resource/obachan_thumb.jpg"
+obachan_full = "https://Wild-Family.github.io/new-obachan-bot/images/obachan_full.jpg"
+obachan_thumb = "https://Wild-Family.github.io/new-obachan-bot/images/obachan_thumb.jpg"
 pic_url = "https://obachanbot.blob.core.windows.net/pic/"
 thumb_url = "https://obachanbot.blob.core.windows.net/thumb/"
 
