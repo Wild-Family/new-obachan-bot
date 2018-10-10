@@ -64,7 +64,7 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    if event.message.text == 'とって':
+    if event.message.text in ['とって', '撮って', '取って', 'take a picture plz']:
         line_bot_api.reply_message(
             event.reply_token, [
                 ImageSendMessage(original_content_url=obachan_full, preview_image_url=obachan_thumb),
