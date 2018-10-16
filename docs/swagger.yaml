@@ -1,0 +1,90 @@
+swagger: "2.0"
+info:
+  description: "オバチャンが撮ったるで！用API"
+  version: "1.0.0"
+  title: "new-obachan-api"
+host: "new-obachan-bot.herokuapp.com"
+basePath: "/"
+schemes:
+- "https"
+paths:
+  /users/{userId}/start:
+    get:
+      description: "撮影開始"
+      parameters:
+        -
+          name: userId
+          in: path
+          description: LINEのuserid
+          required: true
+          type: number
+          format: double
+      responses:
+        200:
+          description: Successful responses
+          schema:
+            title: ArrayOfPosts
+            type: object
+            properties:
+              user_id:
+                type: string
+              display_name:
+                type: string
+              message:
+                type: string
+  /users/{userId}/status:
+    get:
+      description: "撮影状況をBotに送信"
+      parameters:
+        -
+          name: userId
+          in: path
+          description: LINEのuserid
+          required: true
+          type: number
+          format: double
+        - 
+          name: dialogue
+          in: query
+          description:  LINEで表示するメッセージ
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful responses
+          schema:
+            type: object
+            properties:
+              user_id:
+                type: string
+              display_name:
+                type: string
+              message:
+                type: string
+  /users/{userId}/post:
+    post:
+      description: "写真をアップロード"
+      parameters: 
+        - 
+          name: userId
+          in: path
+          description: LINEのuserid
+          required: true
+          type: string
+        -
+          name: pic
+          in: query
+          description: 写真
+          required: true
+          type: string
+          format: binary
+      responses:
+        200:
+          description: Successful responses
+          schema:
+            type: object
+            properties:
+              user_id:
+                type: string
+              message:
+                type: string
