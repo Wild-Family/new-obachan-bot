@@ -17,13 +17,22 @@ paths:
           in: path
           description: LINEのuserid
           required: true
-          type: number
-          format: double
+          type: string
       responses:
         200:
           description: Successful responses
           schema:
-            title: ArrayOfPosts
+            type: object
+            properties:
+              user_id:
+                type: string
+              display_name:
+                type: string
+              message:
+                type: string
+        400:
+          description: user not found
+          schema:
             type: object
             properties:
               user_id:
@@ -41,8 +50,7 @@ paths:
           in: path
           description: LINEのuserid
           required: true
-          type: number
-          format: double
+          type: string
         - 
           name: dialogue
           in: query
@@ -52,6 +60,17 @@ paths:
       responses:
         200:
           description: Successful responses
+          schema:
+            type: object
+            properties:
+              user_id:
+                type: string
+              display_name:
+                type: string
+              message:
+                type: string
+        400:
+          description: dialogue parameter is missing
           schema:
             type: object
             properties:
@@ -81,6 +100,15 @@ paths:
       responses:
         200:
           description: Successful responses
+          schema:
+            type: object
+            properties:
+              user_id:
+                type: string
+              message:
+                type: string
+        400:
+          description: pic parameter is missing
           schema:
             type: object
             properties:
