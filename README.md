@@ -51,6 +51,7 @@ Botサーバをherokuで実行する場合，composer.jsonのrequireに以下が
 ## LINK
 ### Botサーバ
 - 本リポジトリ
+- [API仕様書](https://wild-family.github.io/new-obachan-bot/)
 
 ### Rapberry Pi
 - [ここを参照](https://github.com/Wild-Family/new-obachan-camera)

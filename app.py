@@ -26,7 +26,7 @@ import settings
 app = Flask(__name__)
 
 host = os.getenv('HOST', 'http://localhost:8080')
-if os.getenv('ENV') == "develpment":
+if os.getenv('ENV') == "development":
     line_bot_api = LineBotApi(settings.CHANNEL_ACCESS_TOKEN, host)
 elif os.getenv('ENV') == "production":
     line_bot_api = LineBotApi(settings.CHANNEL_ACCESS_TOKEN)
